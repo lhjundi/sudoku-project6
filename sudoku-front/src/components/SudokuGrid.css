@@ -1,0 +1,12 @@
+.sudoku-grid {
+    display: grid;
+    grid-template-columns: repeat(9, 1fr);
+    gap: 5px;
+    max-width: 360px;
+    margin: 20px auto;
+  }
+  
+  .sudoku-row {
+    display: contents;
+  }
+  
