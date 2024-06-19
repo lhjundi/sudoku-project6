@@ -7,20 +7,26 @@ app.use(cors());
 app.use(express.json());
 
 let sudoku = [];
+let errorCounter = 0;
 
 setPredefined();
 
 app.get('/sudoku', (req, res) => {
-    res.json(sudoku);
+    res.json({ sudoku, errorCounter });
 });
 
 app.post('/sudoku', (req, res) => {
+    if (errorCounter >= 7) {
+        return res.status(400).send('Game over! You have reached the maximum number of errors.');
+    }
+
     const { colLetter, rowNumber, value } = req.body;
 
     const cellArray = getCell(`${colLetter}${rowNumber}`);
     const quadrant = getQuadrant(cellArray);
 
     if (quadrant === 0 || cellArray === false) {
+        errorCounter++;
         return res.status(400).send('Célula ou quadrante inválido!');
     }
 
@@ -29,16 +35,18 @@ app.post('/sudoku', (req, res) => {
     if (index !== false) {
         const removed = destroyCell(index);
         if (!removed) {
+            errorCounter++;
             return res.status(400).send('Esta célula já foi atribuída e é pré-definida.');
         }
     }
 
     if (!verifyRules(colLetter, rowNumber, quadrant, value)) {
+        errorCounter++;
         return res.status(400).send('Valor inválido ou regras não respeitadas!');
     }
 
     pushCellValue(colLetter, rowNumber, quadrant, value);
-    res.json(sudoku); // Retorna o estado atualizado do tabuleiro
+    res.json({ sudoku, errorCounter }); // Retorna o estado atualizado do tabuleiro e do contador
 });
 
 app.listen(port, () => {
