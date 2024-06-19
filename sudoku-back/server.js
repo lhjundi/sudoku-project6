@@ -1,7 +1,9 @@
 const express = require('express');
+const cors = require('cors');
 const app = express();
 const port = 3000;
 
+app.use(cors());
 app.use(express.json());
 
 let sudoku = [];
@@ -36,7 +38,7 @@ app.post('/sudoku', (req, res) => {
     }
 
     pushCellValue(colLetter, rowNumber, quadrant, value);
-    res.send('Valor adicionado com sucesso!');
+    res.json(sudoku); // Retorna o estado atualizado do tabuleiro
 });
 
 app.listen(port, () => {
