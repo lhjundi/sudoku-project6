@@ -22,46 +22,46 @@ const publicKey = fs.readFileSync('./chaves/public.key', 'utf8');
 app.post('/register', async (req, res) => {
     const { name, password } = req.body;
     try {
-      const user = await User.create({ name, password });
-      res.status(201).json(user);
+        const user = await User.create({ name, password });
+        res.status(201).json(user);
     } catch (error) {
-      res.status(500).json({ error: 'Erro ao criar usuário' });
+        res.status(500).json({ error: 'Erro ao criar usuário' });
     }
-  });
+});
 
 // Endpoint para login de usuários
 app.post("/login", async (req, res) => {
     const { name, password } = req.body;
     try {
-      const user = await User.findOne({ where: { name } });
-      if (user && user.password === password) {
-        const token = jwt.sign({ id: user.id, name: user.name }, privateKey, {
-          algorithm: "RS256",
-          expiresIn: "1h"
-        });
-        res.json({ token });
-      } else {
-        res.status(401).json({ error: 'Usuário ou senha incorretos' });
-      }
+        const user = await User.findOne({ where: { name } });
+        if (user && user.password === password) {
+            const token = jwt.sign({ id: user.id, name: user.name }, privateKey, {
+                algorithm: "RS256",
+                expiresIn: "1h"
+            });
+            res.json({ token });
+        } else {
+            res.status(401).json({ error: 'Usuário ou senha incorretos' });
+        }
     } catch (error) {
-      res.status(500).json({ error: 'Erro ao fazer login' });
+        res.status(500).json({ error: 'Erro ao fazer login' });
     }
-  });
+});
 
-  function verificaJWT(req, res, next) {
+function verificaJWT(req, res, next) {
     const token = req.headers["authorization"];
     if (!token) {
-      return res.status(401).json({ autenticado: false, mensagem: "Token não fornecido" });
+        return res.status(401).json({ autenticado: false, mensagem: "Token não fornecido" });
     }
-  
+
     jwt.verify(token.split(' ')[1], publicKey, { algorithms: ["RS256"] }, (err, decoded) => {
-      if (err) {
-        return res.status(401).json({ autenticado: false, mensagem: "Token inválido" });
-      }
-      req.user = decoded;
-      next();
+        if (err) {
+            return res.status(401).json({ autenticado: false, mensagem: "Token inválido" });
+        }
+        req.user = decoded;
+        next();
     });
-  }
+}
 //Sudoku
 
 let sudoku = [];
@@ -71,13 +71,13 @@ setPredefined();
 
 // Endpoint de Sudoku protegido
 app.get('/sudoku', verificaJWT, (req, res) => {
-    console.log('GET /sudoku endpoint');
-    console.log('Sudoku data: ', sudoku);
+    //console.log('GET /sudoku endpoint');
+    //console.log('Sudoku data: ', sudoku);
     res.json({ sudoku, errorCounter });
-  });
-  
+});
+
 app.post('/sudoku', verificaJWT, (req, res) => {
-    console.log('POST /sudoku endpoint')
+    //console.log('POST /sudoku endpoint')
     if (errorCounter >= 7) {
         return res.status(400).send('Game over! You have reached the maximum number of errors.');
     }
@@ -129,7 +129,7 @@ function setPredefined() {
     );
 }
 
-    //Retorna um array onde a primeira posição é a letra e a segunda o número
+//Retorna um array onde a primeira posição é a letra e a segunda o número
 function getCell(input) {
     let arrayInput = input.split("");
     if (arrayInput.length != 2) {
@@ -139,8 +139,8 @@ function getCell(input) {
     return arrayInput;
 }
 
-    //indexOf() retorna -1 quando não encontra ou o índice no array
-    //quando encontra retorna o quadrante ao qual pertence esta célula
+//indexOf() retorna -1 quando não encontra ou o índice no array
+//quando encontra retorna o quadrante ao qual pertence esta célula
 function getQuadrant(cellArray) {
     const lettersOfCol = ["A", "B", "C", "D", "E", "F", "G", "H", "I"];
     const numbersOfRow = [1, 2, 3, 4, 5, 6, 7, 8, 9];
@@ -155,35 +155,35 @@ function getQuadrant(cellArray) {
         return 0;
     }
 
-//conditions
-let first = indexOfLetter;
-let second = indexOfRow;
+    //conditions
+    let first = indexOfLetter;
+    let second = indexOfRow;
 
-if (first >= 0 && first <= 2) {
-    if (second >= 0 && second <= 2) {
-        return 1;
-    } else if (second >= 3 && second <= 5) {
-        return 2;
-    } else if (second >= 6 && second <= 8) {
-        return 3;
-    } else return 0;//não encontrou
-} else if (first >= 3 && first <= 5) {
-    if (second >= 0 && second <= 2) {
-        return 4;
-    } else if (second >= 3 && second <= 5) {
-        return 5;
-    } else if (second >= 6 && second <= 8) {
-        return 6;
-    } else return 0;
-} else if (first >= 6 && first <= 8) {
-    if (second >= 0 && second <= 2) {
-        return 7;
-    } else if (second >= 3 && second <= 5) {
-        return 8;
-    } else if (second >= 6 && second <= 8) {
-        return 9;
-    } else return 0;
-} else return 0; //não encontrou
+    if (first >= 0 && first <= 2) {
+        if (second >= 0 && second <= 2) {
+            return 1;
+        } else if (second >= 3 && second <= 5) {
+            return 2;
+        } else if (second >= 6 && second <= 8) {
+            return 3;
+        } else return 0;//não encontrou
+    } else if (first >= 3 && first <= 5) {
+        if (second >= 0 && second <= 2) {
+            return 4;
+        } else if (second >= 3 && second <= 5) {
+            return 5;
+        } else if (second >= 6 && second <= 8) {
+            return 6;
+        } else return 0;
+    } else if (first >= 6 && first <= 8) {
+        if (second >= 0 && second <= 2) {
+            return 7;
+        } else if (second >= 3 && second <= 5) {
+            return 8;
+        } else if (second >= 6 && second <= 8) {
+            return 9;
+        } else return 0;
+    } else return 0; //não encontrou
 }
 
 //preenche o vetor de objetos sudoku com a entrada;

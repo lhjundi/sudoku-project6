@@ -66,20 +66,21 @@ function App() {
             value={nome}
             onChange={(e) => setNome(e.target.value)}
           />
+          <br/>
           <input
             type="password"
             placeholder="Senha"
             value={senha}
             onChange={(e) => setSenha(e.target.value)}
-          />
+          /><br /><br />
           <button onClick={register}>Registrar</button>
+          <br /><br />
           <button onClick={login}>Login</button>
         </div>
       ) : (
         <div>
           <h3>Sudoku</h3>
           <button onClick={carregarSudoku}>Carregar Sudoku</button>
-          <div>Erros: {errors}/7</div>
           <SudokuGrid sudoku={sudoku} setSudoku={setSudoku} errors={errors} setErrors={setErrors} />
         </div>
       )}
